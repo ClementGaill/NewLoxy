@@ -1,15 +1,14 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 
-const textColor = Color(0xFF080C14);
-const backgroundColor = Color(0xFFF1F3FA);
-const primaryColor = Color(0xFF5670BE);
-const primaryFgColor = Color(0xFFF1F3FA);
-const secondaryColor = Color(0xFFB89CD9);
-const secondaryFgColor = Color(0xFF080C14);
-const accentColor = Color(0xFFAF6EC7);
-const accentFgColor = Color(0xFF080C14);
-const greyColor = Color(0xFF687684);
+const textColor = Color(0xFF040609);
+const backgroundColor = Color(0xFFfafbfd);
+const primaryColor = Color(0xFF5e83b6);
+const primaryFgColor = Color(0xFF040609);
+const secondaryColor = Color(0xFFd4a0a9);
+const secondaryFgColor = Color(0xFF040609);
+const accentColor = Color(0xFFc5a97f);
+const accentFgColor = Color(0xFF040609);
   
 const colorScheme = ColorScheme(
   brightness: Brightness.light,
@@ -26,3 +25,5 @@ const colorScheme = ColorScheme(
   error: Brightness.light == Brightness.light ? Color(0xffB3261E) : Color(0xffF2B8B5),
   onError: Brightness.light == Brightness.light ? Color(0xffFFFFFF) : Color(0xff601410),
 );
+
+const greyColor = Color.fromARGB(255, 76, 87, 97);

@@ -82,8 +82,6 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-      floatingActionButton: FloatingActionButton(onPressed: () {}, child: Icon(LucideIcons.plus),),
-
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
@@ -109,10 +107,33 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 20,),
         
               Story(),
+
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 150,
+                    decoration: const BoxDecoration(
+                      color: primaryColor,
+                    ),
+                  
+                    child: Stack(
+                      children: [
+                        Image.asset('assets/maps.png', width: double.infinity, fit: BoxFit.cover, colorBlendMode: BlendMode.darken,)
+                      ],
+                    ),
+                  ),
+                ),
+              ),
         
               const Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 20,
+                  vertical: 10.0
                 ),
                 child: Post(),
               )
@@ -138,7 +159,7 @@ class Story extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 150,
+      height: 100,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
@@ -161,8 +182,8 @@ class Story extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(1000),
                                 child: Image.network(
                                   'https://scontent-cdg4-3.cdninstagram.com/v/t51.2885-19/381396316_693002242851640_4164785196712109275_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-cdg4-3.cdninstagram.com&_nc_cat=104&_nc_ohc=bjFwSqF3KbgQ7kNvgEx_zpE&edm=AEhyXUkBAAAA&ccb=7-5&oh=00_AYCrGleWaHG2Tyu69ZZumr3fWyRuFmYOvWZRwB2unazmcA&oe=66908B92&_nc_sid=8f1549',
-                                  height: 80,
-                                  width: 80,
+                                  height: 50,
+                                  width: 50,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -223,8 +244,8 @@ class Story extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(1000),
                                 child: Image.network(
                                   items[index]['image']!,
-                                  height: 80,
-                                  width: 80,
+                                  height: 50,
+                                  width: 50,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -232,15 +253,7 @@ class Story extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 5),
-                        SizedBox(
-                          width: 95,
-                          child: Text(
-                            items[index]['text']!,
-                            style: Theme.of(context).textTheme.labelSmall,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                        
                       ],
                     ),
                   );
@@ -466,7 +479,7 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: SnakeNavigationBar.color(
         behaviour: SnakeBarBehaviour.floating,
         padding: const EdgeInsets.all(10.0),
-        snakeShape: SnakeShape.rectangle,
+        snakeShape: SnakeShape.circle,
         snakeViewColor: primaryColor,
         selectedItemColor: backgroundColor,
         unselectedItemColor: greyColor,
@@ -483,7 +496,7 @@ class _MainPageState extends State<MainPage> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(LucideIcons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(LucideIcons.mapPin), label: 'Maps'),
+          BottomNavigationBarItem(icon: Icon(LucideIcons.plus), label: 'Publish'),
           BottomNavigationBarItem(icon: Icon(LucideIcons.user2), label: 'Profile'),
         ],
       ),
