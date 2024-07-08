@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, must_be_immutable
+// ignore_for_file: use_super_parameters, must_be_immutable, avoid_print
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
@@ -109,22 +109,31 @@ class _HomePageState extends State<HomePage> {
               Story(),
 
               Padding(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
                   child: Container(
                     width: double.infinity,
-                    height: 150,
+                    height: MediaQuery.of(context).size.width / 2.7,
                     decoration: const BoxDecoration(
-                      color: primaryColor,
+                      image: DecorationImage(
+                        image: AssetImage('assets/maps.png'),
+                        fit: BoxFit.cover,
+                        colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
+                      ),
                     ),
-                  
-                    child: Stack(
-                      children: [
-                        Image.asset('assets/maps.png', width: double.infinity, fit: BoxFit.cover, colorBlendMode: BlendMode.darken,)
-                      ],
+
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Maps', style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: backgroundColor),)
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -274,7 +283,7 @@ class Post extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: 10,
       itemBuilder:(context, index) {
         return Padding(
@@ -440,7 +449,7 @@ class ImageZoom extends StatelessWidget {
       onDragUpdate: (details) {
         print(details);
       },
-      dismissThresholds: {
+      dismissThresholds: const {
         DismissiblePageDismissDirection.vertical: .2,
       },
       minScale: .8,
@@ -486,7 +495,7 @@ class _MainPageState extends State<MainPage> {
         showUnselectedLabels: false,
         showSelectedLabels: true,
         backgroundColor: backgroundColor,
-        shape: RoundedRectangleBorder(side: BorderSide(width: 1, color: greyColor), borderRadius: BorderRadius.circular(15.0),),
+        shape: RoundedRectangleBorder(side: const BorderSide(width: 1, color: greyColor), borderRadius: BorderRadius.circular(15.0),),
         currentIndex: _selectedItemPosition,
         elevation: 0.5,
         onTap: (index) {
