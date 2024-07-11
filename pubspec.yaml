@@ -39,6 +39,8 @@ dependencies:
   lucide_icons: ^0.257.0
   dismissible_page: ^1.0.2
   flutter_snake_navigationbar: ^0.6.1
+  webview_flutter: ^4.8.0
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:

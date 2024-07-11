@@ -1,8 +1,12 @@
-// ignore_for_file: use_super_parameters, must_be_immutable, avoid_print
+// ignore_for_file: use_super_parameters, must_be_immutable, avoid_print, library_private_types_in_public_api
+import 'dart:convert';
+
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:testloxy/Widgets/colors.dart';
 
@@ -17,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Loxy',
       theme: ThemeData(
         textTheme: GoogleFonts.spaceGroteskTextTheme(
           Theme.of(context).textTheme,
@@ -139,12 +143,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
         
-              const Padding(
-                padding: EdgeInsets.symmetric(
+              Padding(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 10.0
                 ),
-                child: Post(),
+                child: Post(postNumber: 10,),
               )
             ],
           ),
@@ -168,7 +172,7 @@ class Story extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
+      height: 110,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
@@ -191,8 +195,8 @@ class Story extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(1000),
                                 child: Image.network(
                                   'https://scontent-cdg4-3.cdninstagram.com/v/t51.2885-19/381396316_693002242851640_4164785196712109275_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-cdg4-3.cdninstagram.com&_nc_cat=104&_nc_ohc=bjFwSqF3KbgQ7kNvgEx_zpE&edm=AEhyXUkBAAAA&ccb=7-5&oh=00_AYCrGleWaHG2Tyu69ZZumr3fWyRuFmYOvWZRwB2unazmcA&oe=66908B92&_nc_sid=8f1549',
-                                  height: 50,
-                                  width: 50,
+                                  height: 70,
+                                  width: 70,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -221,52 +225,63 @@ class Story extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 8),
                   SizedBox(
                     width: 95,
                     child: Text(
                       'Your story',
-                      style: Theme.of(context).textTheme.labelSmall,
+                      style: Theme.of(context).textTheme.bodySmall,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ],
               ),
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(1000),
-                          child: Container(
-                            color: primaryColor,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(1000),
-                                child: Image.network(
-                                  items[index]['image']!,
-                                  height: 50,
-                                  width: 50,
-                                  fit: BoxFit.cover,
+              SizedBox(
+                height: 110,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(1000),
+                            child: Container(
+                              color: primaryColor,
+                              child: Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(1000),
+                                  child: Image.network(
+                                    items[index]['image']!,
+                                    height: 70,
+                                    width: 70,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        
-                      ],
-                    ),
-                  );
-                },
+                          SizedBox(height: 8),
+                          Container(
+                            width: 90,
+                            child: Text(
+                              items[index]['text']!,
+                              style: Theme.of(context).textTheme.labelSmall,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -277,14 +292,16 @@ class Story extends StatelessWidget {
 }
 
 class Post extends StatelessWidget {
-  const Post({Key? key}) : super(key: key);
+  int postNumber;
+
+  Post({required this.postNumber, super.key});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: 10,
+      itemCount: postNumber,
       itemBuilder:(context, index) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 5.0),
@@ -473,7 +490,7 @@ class _MainPageState extends State<MainPage> {
 
   final screens = [
     const HomePage(),
-    const MapPage(),
+    const Publish(),
     const Profil(),
   ];
 
@@ -513,19 +530,263 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-class MapPage extends StatelessWidget {
+class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
   @override
+  State<MapPage> createState() => _MapPageState();
+}
+
+class _MapPageState extends State<MapPage> {
+final double latitude = 48.8588443; // Exemple: latitude de la Tour Eiffel
+  final double longitude = 2.2943506; // Exemple: longitude de la Tour Eiffel
+  final double radius = 500.0; // Rayon en mètres
+  List places = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPlaces();
+  }
+
+  Future<void> fetchPlaces() async {
+    final query = """
+      [out:json];
+      (
+        node(around:$radius,$latitude,$longitude)[tourism][name];
+        node(around:$radius,$latitude,$longitude)[leisure][name];
+        node(around:$radius,$latitude,$longitude)[amenity~"restaurant|cafe|cinema|theatre|park"][name];
+        way(around:$radius,$latitude,$longitude)[tourism][name];
+        way(around:$radius,$latitude,$longitude)[leisure][name];
+        way(around:$radius,$latitude,$longitude)[amenity~"restaurant|cafe|cinema|theatre|park"][name];
+        relation(around:$radius,$latitude,$longitude)[tourism][name];
+        relation(around:$radius,$latitude,$longitude)[leisure][name];
+        relation(around:$radius,$latitude,$longitude)[amenity~"restaurant|cafe|cinema|theatre|park"][name];
+      );
+      out body;
+      >;
+      out skel qt;
+    """;
+
+    final url = 'https://overpass-api.de/api/interpreter';
+    print("Request URL: $url");
+    print("Query: $query");
+    final response = await http.post(
+      Uri.parse(url),
+      body: {'data': query},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print("Response Data: ${response.body}");
+      setState(() {
+        places = data['elements'].where((place) {
+          final name = place['tags']?['name'];
+          final amenity = place['tags']?['amenity'];
+          final highway = place['tags']?['highway'];
+          // Exclure les lieux sans nom, avec nom générique, et arrêts de bus
+          return name != null &&
+              !name.startsWith('Place:') &&
+              highway == null &&
+              amenity != 'bus_station' && amenity != 'parking';
+        }).toList();
+      });
+    } else {
+      throw Exception('Failed to load places');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(backgroundColor: textColor,);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Lieux populaires autour de vous'),
+      ),
+      body: places.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: places.length,
+              itemBuilder: (context, index) {
+                final place = places[index];
+                return ListTile(
+                  title: Text(place['tags'] != null && place['tags']['name'] != null
+                      ? place['tags']['name']
+                      : 'Place ${place['id']}'),
+                  subtitle: Text(
+                      'Type: ${place['tags']['highway']}, ID: ${place['id']}'),
+                );
+              },
+            ),
+    );
   }
 }
+
 class Profil extends StatelessWidget {
   const Profil({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(backgroundColor: secondaryColor,);
+  }
+}
+
+
+class Publish extends StatefulWidget {
+  const Publish({super.key});
+
+  @override
+  _PublishState createState() => _PublishState();
+}
+
+class _PublishState extends State<Publish> {
+  final int maxCharacterCount = 140;
+  final TextEditingController _publishController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _publishController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _publishController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double maxCharacterCount = 140;
+    TextEditingController _publishController = TextEditingController();
+
+    return Scaffold(
+      backgroundColor: backgroundColor,
+
+      appBar: AppBar(
+        title: const Text('Publish'),
+
+        actions: const [
+          TextButton(onPressed: null, child: Text('Publish a Lox...'))
+        ],
+      ),
+
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20,),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _publishController,
+                    textInputAction: TextInputAction.send,
+                    maxLength: 140,
+                    autofocus: false,
+                    maxLines: 6,
+                    minLines: 6,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(LucideIcons.pencil),
+                      labelText: 'How are you... ?',
+                      counterText: '',
+                      filled: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                      fillColor: primaryColor.withOpacity(0.1),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        borderSide: const BorderSide(
+                          width: 0,
+                          style: BorderStyle.none,
+                        ),
+                      ),
+                    ),
+                    keyboardType: TextInputType.text,
+                  
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
+
+                  const SizedBox(height: 10,),
+        
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: LinearProgressIndicator(
+                      backgroundColor: Colors.grey.withOpacity(0.1), // replace with your secondaryColor
+                      minHeight: 4,
+                      value: _publishController.text.length / maxCharacterCount,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue), // replace with your primaryColor
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        
+            const SizedBox(height: 10,),
+        
+            Container(
+              constraints: const BoxConstraints(
+                maxHeight: 70,
+              ),
+              child: ListView.builder(
+                padding: const EdgeInsets.only(left: 20.0),
+                scrollDirection: Axis.horizontal,
+                itemCount: publishItem.PublishList().length,
+                itemBuilder:(context, index) {
+                  publishItem items = publishItem.PublishList()[index];
+              
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: CircleAvatar(
+                      radius: 30,
+                      child: IconButton(
+                        onPressed: () {}, 
+                        icon: Icon(items.icon, color: backgroundColor,),
+                        tooltip: items.name,
+                      ),
+                    )
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 10.0,),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20,),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Preview :', style: Theme.of(context).textTheme.bodyLarge,),
+                  const SizedBox(height: 5.0,),
+                  Post(postNumber: 1,)
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class publishItem {
+ final id;
+  final String name;
+  final IconData icon;
+  final Function()? onPressed;
+
+
+  publishItem(this.id, this.name, this.icon, this.onPressed);
+
+  static List<publishItem> PublishList() {
+    return <publishItem> [
+      publishItem(0, "Pictures", LucideIcons.camera, () {}),
+      publishItem(1, "Music", LucideIcons.music, () {}),
+      publishItem(2, "Gif", Icons.gif_outlined, () {}),
+      publishItem(3, "Pool", LucideIcons.vote, () {}),
+    ];
   }
 }
