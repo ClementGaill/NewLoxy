@@ -1,9 +1,8 @@
-// ignore_for_file: use_super_parameters, must_be_immutable, avoid_print, library_private_types_in_public_api
+// ignore_for_file: use_super_parameters, must_be_immutable, avoid_print, library_private_types_in_public_api, camel_case_types, prefer_typing_uninitialized_variables
 import 'dart:convert';
 
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -194,7 +193,7 @@ class Story extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(1000),
                                 child: Image.network(
-                                  'https://scontent-cdg4-3.cdninstagram.com/v/t51.2885-19/381396316_693002242851640_4164785196712109275_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-cdg4-3.cdninstagram.com&_nc_cat=104&_nc_ohc=bjFwSqF3KbgQ7kNvgEx_zpE&edm=AEhyXUkBAAAA&ccb=7-5&oh=00_AYCrGleWaHG2Tyu69ZZumr3fWyRuFmYOvWZRwB2unazmcA&oe=66908B92&_nc_sid=8f1549',
+                                  'https://scontent-cdg4-1.cdninstagram.com/v/t51.2885-19/450088346_1885435238620906_7933179071852387477_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-cdg4-1.cdninstagram.com&_nc_cat=110&_nc_ohc=XpedfkeN37YQ7kNvgG2sxS7&edm=AEhyXUkBAAAA&ccb=7-5&oh=00_AYBTCJ2_BLTd5SzBxiKFUYyElfACEdCEAd52Xj98LLMsng&oe=66972679&_nc_sid=8f1549',
                                   height: 70,
                                   width: 70,
                                   fit: BoxFit.cover,
@@ -658,7 +657,6 @@ class _PublishState extends State<Publish> {
 
   @override
   Widget build(BuildContext context) {
-    double maxCharacterCount = 140;
     TextEditingController _publishController = TextEditingController();
 
     return Scaffold(
@@ -694,7 +692,7 @@ class _PublishState extends State<Publish> {
                       counterText: '',
                       filled: true,
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      fillColor: primaryColor.withOpacity(0.1),
+                      fillColor: primaryColor.withOpacity(0.2),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.0),
                         borderSide: const BorderSide(
@@ -715,8 +713,9 @@ class _PublishState extends State<Publish> {
                     child: LinearProgressIndicator(
                       backgroundColor: Colors.grey.withOpacity(0.1), // replace with your secondaryColor
                       minHeight: 4,
-                      value: _publishController.text.length / maxCharacterCount,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue), // replace with your primaryColor
+                      //value: _publishController.text.length / maxCharacterCount,
+                      value: 0.7,
+                      valueColor: const AlwaysStoppedAnimation<Color>(secondaryColor), // replace with your primaryColor
                     ),
                   ),
                 ],
@@ -732,16 +731,16 @@ class _PublishState extends State<Publish> {
               child: ListView.builder(
                 padding: const EdgeInsets.only(left: 20.0),
                 scrollDirection: Axis.horizontal,
-                itemCount: publishItem.PublishList().length,
+                itemCount: publishItem.PublishList(context).length,
                 itemBuilder:(context, index) {
-                  publishItem items = publishItem.PublishList()[index];
+                  publishItem items = publishItem.PublishList(context)[index];
               
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: CircleAvatar(
                       radius: 30,
                       child: IconButton(
-                        onPressed: () {}, 
+                        onPressed: items.onPressed, 
                         icon: Icon(items.icon, color: backgroundColor,),
                         tooltip: items.name,
                       ),
@@ -781,12 +780,178 @@ class publishItem {
 
   publishItem(this.id, this.name, this.icon, this.onPressed);
 
-  static List<publishItem> PublishList() {
+  static List<publishItem> PublishList(BuildContext context) {
     return <publishItem> [
       publishItem(0, "Pictures", LucideIcons.camera, () {}),
-      publishItem(1, "Music", LucideIcons.music, () {}),
+      publishItem(1, "Music", LucideIcons.music, () {Navigator.of(context).push(MaterialPageRoute(builder: (context) => MusicPage(),),);}),
       publishItem(2, "Gif", Icons.gif_outlined, () {}),
       publishItem(3, "Pool", LucideIcons.vote, () {}),
     ];
+  }
+}
+
+class MusicPage extends StatefulWidget {
+  @override
+  _MusicPageState createState() => _MusicPageState();
+}
+
+class _MusicPageState extends State<MusicPage> {
+  List<dynamic> searchResults = [];
+  List<dynamic> tracks = [];
+  bool isLoading = true;
+  String nextPageUrl = "";
+  bool nextPage = false;
+  double _scrollOffset = 0.0;
+  ScrollController _scrollController = ScrollController();
+  FocusNode _searchFocusNode = FocusNode();
+  TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+    trendingMusic();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchFocusNode.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    setState(() {
+      _scrollOffset = _scrollController.offset;
+    });
+  }
+
+  Future<void> trendingMusic() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      const playlistEndpoint = 'https://api.deezer.com/playlist/1109890291';
+
+      final response = await http.get(
+        Uri.parse(playlistEndpoint),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> playlistData = json.decode(response.body);
+        setState(() {
+          tracks = playlistData['tracks']['data'];
+          isLoading = false;
+        });
+        print(tracks);
+      } else {
+        print('Error fetching playlist tracks: ${response.reasonPhrase}');
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double fadeInOpacity = _scrollOffset / 400.0;
+    if (fadeInOpacity > 1.0) fadeInOpacity = 1.0;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Music'),
+        actions: [
+          AnimatedOpacity(
+            opacity: fadeInOpacity,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: IconButton(
+              icon: const Icon(LucideIcons.search),
+              onPressed: () {
+                _scrollController.animateTo(
+                  0,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                );
+                FocusScope.of(context).requestFocus(_searchFocusNode);
+              },
+            ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _searchController,
+                focusNode: _searchFocusNode,
+                textInputAction: TextInputAction.search,
+                maxLength: 140,
+                autofocus: false,
+                maxLines: 1,
+                minLines: 1,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(LucideIcons.search),
+                  labelText: 'Powered by Deezer...',
+                  counterText: '',
+                  filled: true,
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  fillColor: Colors.grey.withOpacity(0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    borderSide: const BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                ),
+                keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
+              ),
+              const SizedBox(height: 10.0,),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: tracks.length,
+                itemBuilder: (context, index) {
+                  var imageUrl = tracks[index]['album']['cover_medium'];
+                  var trackName = tracks[index]['title'];
+                  var artistNames = tracks[index]['artist']['name'];
+
+                  return ListTile(
+                    leading: imageUrl.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(5.0),
+                            child: Image.network(imageUrl, width: 50, height: 50))
+                        : const SizedBox(width: 50, height: 50),
+                    title: Text(
+                      trackName,
+                      textAlign: TextAlign.left,
+                    ),
+                    subtitle: Text(
+                      artistNames,
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
+                    ),
+                    onTap: () {},
+                  );
+                },
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
