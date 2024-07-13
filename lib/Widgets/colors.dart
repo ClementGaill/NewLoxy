@@ -26,4 +26,4 @@ const colorScheme = ColorScheme(
   onError: Brightness.light == Brightness.light ? Color(0xffFFFFFF) : Color(0xff601410),
 );
 
-const greyColor = Color.fromARGB(255, 76, 87, 97);
+const greyColor = Color.fromARGB(255, 174, 185, 199);

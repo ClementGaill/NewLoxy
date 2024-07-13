@@ -1,12 +1,14 @@
-// ignore_for_file: use_super_parameters, must_be_immutable, avoid_print, library_private_types_in_public_api, camel_case_types, prefer_typing_uninitialized_variables
+// ignore_for_file: use_super_parameters, must_be_immutable, avoid_print, library_private_types_in_public_api, camel_case_types, prefer_typing_uninitialized_variables, non_constant_identifier_names
 import 'dart:convert';
 
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:testloxy/Widgets/colors.dart';
 
 void main() {
@@ -49,11 +51,12 @@ class MyApp extends StatelessWidget {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
-            foregroundColor: primaryFgColor,
+            foregroundColor: backgroundColor,
             minimumSize: const Size(double.infinity, 50), // Bouton pleine largeur, hauteur personnalisée
             textStyle: GoogleFonts.spaceGrotesk(
               fontWeight: FontWeight.bold,
-              color: primaryFgColor,
+              color: backgroundColor,
+              fontSize: 20
             ),
           ),
         ),
@@ -266,8 +269,8 @@ class Story extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(height: 8),
-                          Container(
+                          const SizedBox(height: 8),
+                          SizedBox(
                             width: 90,
                             child: Text(
                               items[index]['text']!,
@@ -490,7 +493,7 @@ class _MainPageState extends State<MainPage> {
   final screens = [
     const HomePage(),
     const Publish(),
-    const Profil(),
+    const ProfilPage(),
   ];
 
   @override
@@ -567,7 +570,7 @@ final double latitude = 48.8588443; // Exemple: latitude de la Tour Eiffel
       out skel qt;
     """;
 
-    final url = 'https://overpass-api.de/api/interpreter';
+    const url = 'https://overpass-api.de/api/interpreter';
     print("Request URL: $url");
     print("Query: $query");
     final response = await http.post(
@@ -599,10 +602,10 @@ final double latitude = 48.8588443; // Exemple: latitude de la Tour Eiffel
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lieux populaires autour de vous'),
+        title: const Text('Lieux populaires autour de vous'),
       ),
       body: places.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: places.length,
               itemBuilder: (context, index) {
@@ -617,15 +620,6 @@ final double latitude = 48.8588443; // Exemple: latitude de la Tour Eiffel
               },
             ),
     );
-  }
-}
-
-class Profil extends StatelessWidget {
-  const Profil({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(backgroundColor: secondaryColor,);
   }
 }
 
@@ -657,7 +651,7 @@ class _PublishState extends State<Publish> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _publishController = TextEditingController();
+    TextEditingController publishController = TextEditingController();
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -680,7 +674,7 @@ class _PublishState extends State<Publish> {
               child: Column(
                 children: [
                   TextField(
-                    controller: _publishController,
+                    controller: publishController,
                     textInputAction: TextInputAction.send,
                     maxLength: 140,
                     autofocus: false,
@@ -692,7 +686,7 @@ class _PublishState extends State<Publish> {
                       counterText: '',
                       filled: true,
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      fillColor: primaryColor.withOpacity(0.2),
+                      fillColor: primaryColor.withOpacity(0.1),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.0),
                         borderSide: const BorderSide(
@@ -783,14 +777,16 @@ class publishItem {
   static List<publishItem> PublishList(BuildContext context) {
     return <publishItem> [
       publishItem(0, "Pictures", LucideIcons.camera, () {}),
-      publishItem(1, "Music", LucideIcons.music, () {Navigator.of(context).push(MaterialPageRoute(builder: (context) => MusicPage(),),);}),
-      publishItem(2, "Gif", Icons.gif_outlined, () {}),
-      publishItem(3, "Pool", LucideIcons.vote, () {}),
+      publishItem(1, "Music", LucideIcons.music, () {Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: const MusicPage()));}),
+      publishItem(2, "Gif", Icons.gif_outlined, () {Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: const GifPage()));}),
+      publishItem(3, "Pool", LucideIcons.vote, () {Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: const PoolPage()));}),
     ];
   }
 }
 
 class MusicPage extends StatefulWidget {
+  const MusicPage({super.key});
+
   @override
   _MusicPageState createState() => _MusicPageState();
 }
@@ -802,9 +798,9 @@ class _MusicPageState extends State<MusicPage> {
   String nextPageUrl = "";
   bool nextPage = false;
   double _scrollOffset = 0.0;
-  ScrollController _scrollController = ScrollController();
-  FocusNode _searchFocusNode = FocusNode();
-  TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _searchFocusNode = FocusNode();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -869,14 +865,14 @@ class _MusicPageState extends State<MusicPage> {
         actions: [
           AnimatedOpacity(
             opacity: fadeInOpacity,
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             child: IconButton(
               icon: const Icon(LucideIcons.search),
               onPressed: () {
                 _scrollController.animateTo(
                   0,
-                  duration: Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
                 );
                 FocusScope.of(context).requestFocus(_searchFocusNode);
@@ -907,7 +903,7 @@ class _MusicPageState extends State<MusicPage> {
                   counterText: '',
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
-                  fillColor: Colors.grey.withOpacity(0.2),
+                  fillColor: primaryColor.withOpacity(0.1),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: const BorderSide(
@@ -950,6 +946,545 @@ class _MusicPageState extends State<MusicPage> {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class GifPage extends StatefulWidget {
+  const GifPage({super.key});
+
+  @override
+  State<GifPage> createState() => _GifPageState();
+}
+
+class _GifPageState extends State<GifPage> {
+  bool isLoading = true;
+  String nextPageUrl = "";
+  bool nextPage = false;
+  double _scrollOffset = 0.0;
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _gifFocusNode = FocusNode();
+  final String giphyApiKey = 'AGCLF0r2DvN2P6IoIaQPoKklmEt9TBgU';
+  final String giphyTrendingEndpoint = 'https://api.giphy.com/v1/gifs/trending?api_key=';
+  final TextEditingController _gifController = TextEditingController();
+  List<String> trendingGifs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+    fetchTrendingGifs();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _gifFocusNode.dispose();
+    _gifController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    setState(() {
+      _scrollOffset = _scrollController.offset;
+    });
+  }
+
+  Future<void> fetchTrendingGifs() async {
+    final response = await http.get(Uri.parse('$giphyTrendingEndpoint$giphyApiKey'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List<dynamic> gifs = data['data'];
+
+      print(data);
+
+      setState(() {
+        trendingGifs = gifs.map<String>((gif) => gif['images']['fixed_height']['url']).toList();
+        isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load trending GIFs');
+    }
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    double fadeInOpacity = _scrollOffset / 400.0;
+    if (fadeInOpacity > 1.0) fadeInOpacity = 1.0;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Select Gif'),
+        actions: [
+          AnimatedOpacity(
+            opacity: fadeInOpacity,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: IconButton(
+              icon: const Icon(LucideIcons.search),
+              onPressed: () {
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                );
+                FocusScope.of(context).requestFocus(_gifFocusNode);
+              },
+            ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _gifController,
+                focusNode: _gifFocusNode,
+                textInputAction: TextInputAction.search,
+                maxLength: 140,
+                autofocus: false,
+                maxLines: 1,
+                minLines: 1,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(LucideIcons.search),
+                  labelText: 'Powered by Giphy...',
+                  counterText: '',
+                  filled: true,
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  fillColor: primaryColor.withOpacity(0.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    borderSide: const BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                ),
+                keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
+              ),
+              const SizedBox(height: 10.0,),
+              Builder(
+                builder: (context) {
+                  return MasonryGridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: trendingGifs.length,
+                      itemBuilder: (context, index) {
+                        final imageUrl = trendingGifs[index];
+                        return GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Hero(
+                              tag: imageUrl,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15.0),
+                                child: Image.network(
+                                  width: MediaQuery.sizeOf(context).width / 4,
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    } else {
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ??1): null,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                    return const Center(
+                                      child: Text('Erreur de chargement de l\'image'),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PoolPage extends StatefulWidget {
+  const PoolPage({super.key});
+
+  @override
+  State<PoolPage> createState() => _PoolPageState();
+}
+
+class _PoolPageState extends State<PoolPage> {
+  TextEditingController titleController = TextEditingController();
+  List<TextEditingController> _controllers = [];
+  List<Widget> _textFields = [];
+  int selectedDay = 0;
+  int selectedMinute = 0;
+
+  final List<int> days = List<int>.generate(4, (i) => i);
+  final List<int> minutes = List<int>.generate(60, (i) => i);
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      _addTextField();
+      _addTextField();
+    });
+  }
+
+  Widget _buildTextField(int index) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              textInputAction: TextInputAction.next,
+              maxLength: 14,
+              autofocus: false,
+              maxLines: 1,
+              minLines: 1,
+              decoration: InputDecoration(
+                labelText: 'Choice ${index + 1}',
+                counterText: '',
+                filled: true,
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                fillColor: primaryColor.withOpacity(0.1),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
+              ),
+              keyboardType: TextInputType.text,
+              textCapitalization: TextCapitalization.sentences,
+            ),
+          ),
+          if (index >= 2) const SizedBox(width: 5.0),
+          if (index >= 2)
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _controllers.removeAt(index);
+                  _textFields.removeAt(index);
+                  _textFields = List.generate(
+                      _controllers.length, (i) => _buildTextField(i));
+                });
+              },
+              icon: const Icon(LucideIcons.trash),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _addTextField() {
+    if (_textFields.length < 4) {
+      setState(() {
+        _controllers.add(TextEditingController());
+        _textFields.add(_buildTextField(_textFields.length));
+      });
+    }
+  }
+
+  Widget _buildDropdownButton<T>({required List<T> items, required T value, required ValueChanged<T?> onChanged}) {
+    return DropdownButton<T>(
+      value: value,
+      onChanged: onChanged,
+      items: items.map<DropdownMenuItem<T>>((T value) {
+        return DropdownMenuItem<T>(
+          value: value,
+          child: Text(value.toString(),),
+        );
+      }).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: backgroundColor,
+
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Create pool...'),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(LucideIcons.check),
+          ),
+        ],
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10.0,
+          vertical: 20.0
+        ),
+        child: Center(
+          child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                border: Border.all(
+                  width: 1.0,
+                  color: greyColor,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: [
+                          Flexible(
+                            child: TextField(
+                              textInputAction: TextInputAction.done,
+                              maxLength: 15,
+                              autofocus: false,
+                              maxLines: 1,
+                              minLines: 1,
+                              decoration: InputDecoration(
+                                labelText: 'Title',
+                                counterText: '',
+                                filled: true,
+                                floatingLabelBehavior: FloatingLabelBehavior.never,
+                                fillColor: primaryColor.withOpacity(0.1),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: const BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.none,
+                                  ),
+                                ),
+                              ),
+                              keyboardType: TextInputType.text,
+                              textCapitalization: TextCapitalization.sentences,
+                            ),
+                          ),
+                          Expanded(child: Container())
+                        ],
+                      ),
+                      const SizedBox(height: 20.0,),
+                      ..._textFields,
+                      const SizedBox(height: 5.0),
+                      if (_textFields.length < 4)
+                        Align(
+                          alignment: Alignment.center,
+                          child: TextButton(onPressed: () {_addTextField();}, child: const Text('Add option'))
+                        ),
+                      const SizedBox(height: 5,),
+                      const Divider(color: greyColor,),
+                      const SizedBox(height: 5,),
+                      const Text('Add time',),
+                      Row(
+                        children: [
+                          Text('Day : '),
+                          _buildDropdownButton<int>(
+                            items: days,
+                            value: selectedDay,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedDay = value!;
+                              });
+                            },
+                          ),
+                          const SizedBox(width: 20),
+                          const Text('Min '),
+                          _buildDropdownButton<int>(
+                            items: minutes,
+                            value: selectedMinute,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedMinute = value!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+  }
+}
+
+class ProfilPage extends StatelessWidget {
+  const ProfilPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(200), 
+        child: AppBar(
+          flexibleSpace: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(15.0)),
+                  image: DecorationImage(
+                    image: const NetworkImage('https://papers.co/wallpaper/papers.co-we14-pattern-background-apple-iphone12-rainbow-36-3840x2400-4k-wallpaper.jpg'), 
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.8), BlendMode.modulate),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Transform.translate(
+                  offset: const Offset(0, 30),
+                  child: const CircleAvatar(
+                    backgroundColor: primaryColor,
+                    radius: 60,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 60),
+
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Clément GAILLARD', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: greyColor)),
+                  
+                  const SizedBox(height: 5.0,),
+
+                  Text('Ceci es une biographie car j\'adore ecrire', style: Theme.of(context).textTheme.bodyLarge),
+
+                  const SizedBox(height: 15.0,),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('clementt.exe', style: Theme.of(context).textTheme.bodyMedium,),
+                  
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: greyColor),
+                              borderRadius: BorderRadius.circular(15.0)
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(LucideIcons.instagram, size: 20,),
+                          
+                                SizedBox(width: 5.0,),
+                          
+                                Text('Instagram')
+                              ],
+                            ),
+                          ),
+                          
+                          const SizedBox(width: 5.0,),
+                  
+                          Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: greyColor),
+                              borderRadius: BorderRadius.circular(15.0)
+                            ),
+                            child: const Icon(LucideIcons.twitter, size: 20,),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10.0,),
+
+                  ElevatedButton(onPressed: () {}, child: const Text('Add Friends')),
+
+                  const SizedBox(height: 30.0,),
+
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Stack(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: primaryColor.withOpacity(0.4),
+                            image: DecorationImage(
+                              image: NetworkImage('https://images.frandroid.com/wp-content/uploads/2023/06/apple-plans.jpeg',),
+                              fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
+                            )
+                          ),
+                        
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height / 5,
+                        ),
+                    
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              color: secondaryColor,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: const Icon(LucideIcons.expand, color: backgroundColor, size: 45,),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20,),
+
+                  Post(postNumber: 10,)
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
