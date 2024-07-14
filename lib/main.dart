@@ -1140,7 +1140,7 @@ class PoolPage extends StatefulWidget {
 
 class _PoolPageState extends State<PoolPage> {
   TextEditingController titleController = TextEditingController();
-  List<TextEditingController> _controllers = [];
+  final List<TextEditingController> _controllers = [];
   List<Widget> _textFields = [];
   int selectedDay = 0;
   int selectedMinute = 0;
@@ -1310,7 +1310,7 @@ class _PoolPageState extends State<PoolPage> {
                       const Text('Add time',),
                       Row(
                         children: [
-                          Text('Day : '),
+                          const Text('Day : '),
                           _buildDropdownButton<int>(
                             items: days,
                             value: selectedDay,
@@ -1350,141 +1350,151 @@ class ProfilPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(200), 
-        child: AppBar(
-          flexibleSpace: Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(15.0)),
-                  image: DecorationImage(
-                    image: const NetworkImage('https://papers.co/wallpaper/papers.co-we14-pattern-background-apple-iphone12-rainbow-36-3840x2400-4k-wallpaper.jpg'), 
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.8), BlendMode.modulate),
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 200.0,
+              floating: false,
+              pinned: true,
+              flexibleSpace: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(15.0)),
+                    image: DecorationImage(
+                      image: const NetworkImage('https://papers.co/wallpaper/papers.co-we14-pattern-background-apple-iphone12-rainbow-36-3840x2400-4k-wallpaper.jpg'), 
+                      fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.8), BlendMode.modulate),
+                    ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Transform.translate(
-                  offset: const Offset(0, 30),
-                  child: const CircleAvatar(
-                    backgroundColor: primaryColor,
-                    radius: 60,
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Transform.translate(
+                    offset: const Offset(0, 30),
+                    child: const CircleAvatar(
+                      backgroundColor: primaryColor,
+                      radius: 60,
+                    ),
                   ),
+                ),
+              ],
+            ),
+              actions: [
+                IconButton(onPressed: () {}, icon: const Icon(LucideIcons.edit2, color: backgroundColor,)),
+                IconButton(onPressed: () {}, icon: const Icon(LucideIcons.settings, color: backgroundColor,)),
+              ],
+            ),
+          ];
+        },
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 35),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Clément GAILLARD', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: greyColor)),
+                    
+                    const SizedBox(height: 5.0,),
+
+                    Text('Ceci es une biographie car j\'adore ecrire', style: Theme.of(context).textTheme.bodyLarge),
+
+                    const SizedBox(height: 15.0,),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('clementt.exe', style: Theme.of(context).textTheme.bodyMedium,),
+                    
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 1, color: greyColor),
+                                borderRadius: BorderRadius.circular(15.0)
+                              ),
+                              child: const Row(
+                                children: [
+                                  Icon(LucideIcons.instagram, size: 20,),
+                            
+                                  SizedBox(width: 5.0,),
+                            
+                                  Text('Instagram')
+                                ],
+                              ),
+                            ),
+                            
+                            const SizedBox(width: 5.0,),
+                    
+                            Container(
+                              padding: const EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 1, color: greyColor),
+                                borderRadius: BorderRadius.circular(15.0)
+                              ),
+                              child: const Icon(LucideIcons.twitter, size: 20,),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10.0,),
+
+                    ElevatedButton(onPressed: () {}, child: const Text('Add Friends')),
+
+                    const SizedBox(height: 30.0,),
+
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: primaryColor.withOpacity(0.4),
+                              image: const DecorationImage(
+                                image: NetworkImage('https://images.frandroid.com/wp-content/uploads/2023/06/apple-plans.jpeg',),
+                                fit: BoxFit.cover,
+                                colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
+                              )
+                            ),
+                          
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height / 5,
+                          ),
+                      
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                color: secondaryColor,
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              child: const Icon(LucideIcons.expand, color: backgroundColor, size: 45,),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20,),
+
+                    Post(postNumber: 10,)
+                  ],
                 ),
               ),
             ],
           ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 60),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Clément GAILLARD', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: greyColor)),
-                  
-                  const SizedBox(height: 5.0,),
-
-                  Text('Ceci es une biographie car j\'adore ecrire', style: Theme.of(context).textTheme.bodyLarge),
-
-                  const SizedBox(height: 15.0,),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('clementt.exe', style: Theme.of(context).textTheme.bodyMedium,),
-                  
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: greyColor),
-                              borderRadius: BorderRadius.circular(15.0)
-                            ),
-                            child: const Row(
-                              children: [
-                                Icon(LucideIcons.instagram, size: 20,),
-                          
-                                SizedBox(width: 5.0,),
-                          
-                                Text('Instagram')
-                              ],
-                            ),
-                          ),
-                          
-                          const SizedBox(width: 5.0,),
-                  
-                          Container(
-                            padding: const EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: greyColor),
-                              borderRadius: BorderRadius.circular(15.0)
-                            ),
-                            child: const Icon(LucideIcons.twitter, size: 20,),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10.0,),
-
-                  ElevatedButton(onPressed: () {}, child: const Text('Add Friends')),
-
-                  const SizedBox(height: 30.0,),
-
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: primaryColor.withOpacity(0.4),
-                            image: DecorationImage(
-                              image: NetworkImage('https://images.frandroid.com/wp-content/uploads/2023/06/apple-plans.jpeg',),
-                              fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
-                            )
-                          ),
-                        
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height / 5,
-                        ),
-                    
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            padding: EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              color: secondaryColor,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: const Icon(LucideIcons.expand, color: backgroundColor, size: 45,),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20,),
-
-                  Post(postNumber: 10,)
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
