@@ -1354,36 +1354,42 @@ class ProfilPage extends StatelessWidget {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              expandedHeight: 200.0,
+              expandedHeight: MediaQuery.of(context).size.height / 5,
+              leadingWidth: 20.0,
               floating: false,
+              title: innerBoxIsScrolled ? Text('clementt.exe') : null,
               pinned: true,
               flexibleSpace: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(15.0)),
-                    image: DecorationImage(
-                      image: const NetworkImage('https://papers.co/wallpaper/papers.co-we14-pattern-background-apple-iphone12-rainbow-36-3840x2400-4k-wallpaper.jpg'), 
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.8), BlendMode.modulate),
+                children: [
+                  FlexibleSpaceBar(
+                    centerTitle: false,
+                    background: Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(15.0)),
+                        image: DecorationImage(
+                          image: NetworkImage('https://wallpapers.com/images/featured/dark-background-b59iy2towqy5yrgb.jpg'),
+                          fit: BoxFit.cover,
+                          
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Transform.translate(
-                    offset: const Offset(0, 30),
-                    child: const CircleAvatar(
-                      backgroundColor: primaryColor,
-                      radius: 60,
+
+                  innerBoxIsScrolled ? const SizedBox() : Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Transform.translate(
+                      offset: const Offset(0, 30),
+                      child: const CircleAvatar(
+                        backgroundColor: primaryColor,
+                        radius: 60,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
               actions: [
-                IconButton(onPressed: () {}, icon: const Icon(LucideIcons.edit2, color: backgroundColor,)),
-                IconButton(onPressed: () {}, icon: const Icon(LucideIcons.settings, color: backgroundColor,)),
+                IconButton(onPressed: () {}, icon: const Icon(LucideIcons.edit2, color: textColor, shadows: [Shadow(color: backgroundColor, blurRadius: 15.0)],)),
+                IconButton(onPressed: () {}, icon: const Icon(LucideIcons.settings, color: textColor, shadows: [Shadow(color: backgroundColor, blurRadius: 15.0)],)),
               ],
             ),
           ];
