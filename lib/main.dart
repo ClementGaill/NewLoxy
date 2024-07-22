@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:testloxy/Widgets/colors.dart';
+import 'package:testloxy/auth.dart';
 
 void main() {
   runApp(const MyApp());
@@ -64,7 +66,7 @@ class MyApp extends StatelessWidget {
         colorScheme: colorScheme,
         useMaterial3: true,
       ),
-      home: const MainPage(),
+      home: const HomeAuth(),
     );
   }
 }
@@ -185,47 +187,51 @@ class Story extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(1000),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(1000),
-                                child: Image.network(
-                                  'https://scontent-cdg4-1.cdninstagram.com/v/t51.2885-19/450088346_1885435238620906_7933179071852387477_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-cdg4-1.cdninstagram.com&_nc_cat=110&_nc_ohc=XpedfkeN37YQ7kNvgG2sxS7&edm=AEhyXUkBAAAA&ccb=7-5&oh=00_AYBTCJ2_BLTd5SzBxiKFUYyElfACEdCEAd52Xj98LLMsng&oe=66972679&_nc_sid=8f1549',
-                                  height: 70,
-                                  width: 70,
-                                  fit: BoxFit.cover,
+                  InkWell(
+                    borderRadius: BorderRadius.circular(15.0),
+                    onTap: () {Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: const StoryPage()));},
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(1000),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(1000),
+                                  child: Image.asset(
+                                    'assets/profil.jpg',
+                                    height: 70,
+                                    width: 70,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-              
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: primaryColor,
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Icon(
-                              LucideIcons.plus,
-                              color: backgroundColor,
-                              size: 15,
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                                  
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: primaryColor,
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Icon(
+                                LucideIcons.plus,
+                                color: backgroundColor,
+                                size: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
@@ -311,7 +317,7 @@ class Post extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15.0),
-              border: Border.all(width: 1, color: Colors.grey),
+              border: Border.all(width: 1, color: greyColor),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,7 +336,7 @@ class Post extends StatelessWidget {
                           topLeft: Radius.circular(15.0),
                           bottomLeft: Radius.circular(2.0)
                         ),
-                        border: Border.all(width: 1, color: Colors.grey),
+                        border: Border.all(width: 1, color: greyColor),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -340,12 +346,12 @@ class Post extends StatelessWidget {
                           const CircleAvatar(
                             radius: 20,
                             // Placeholder avatar, replace with your actual avatar logic
-                            backgroundColor: Colors.grey,
+                            backgroundColor: greyColor,
                           ),
                           const SizedBox(width: 8.0),
                           Text(
                             'clementt.exe',
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey),
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: greyColor),
                           ),
                         ],
                       ),
@@ -705,7 +711,7 @@ class _PublishState extends State<Publish> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15.0),
                     child: LinearProgressIndicator(
-                      backgroundColor: Colors.grey.withOpacity(0.1), // replace with your secondaryColor
+                      backgroundColor: primaryColor.withOpacity(0.1), // replace with your secondaryColor
                       minHeight: 4,
                       //value: _publishController.text.length / maxCharacterCount,
                       value: 0.7,
@@ -938,7 +944,7 @@ class _MusicPageState extends State<MusicPage> {
                     subtitle: Text(
                       artistNames,
                       textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: greyColor),
                     ),
                     onTap: () {},
                   );
@@ -1344,20 +1350,52 @@ class _PoolPageState extends State<PoolPage> {
   }
 }
 
-class ProfilPage extends StatelessWidget {
+class ProfilPage extends StatefulWidget {
   const ProfilPage({super.key});
+
+  @override
+  _ProfilPageState createState() => _ProfilPageState();
+}
+
+class _ProfilPageState extends State<ProfilPage> {
+  late ScrollController _scrollController;
+  double _avatarOpacity = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    double maxScroll = MediaQuery.of(context).size.height / 5;
+    double offset = _scrollController.offset;
+
+    setState(() {
+      _avatarOpacity = (1 - (offset / maxScroll)).clamp(0.0, 1.0);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
+        controller: _scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
               expandedHeight: MediaQuery.of(context).size.height / 5,
               leadingWidth: 20.0,
               floating: false,
-              title: innerBoxIsScrolled ? Text('clementt.exe') : null,
+              title: innerBoxIsScrolled ? const Text('clementt.exe') : null,
               pinned: true,
               flexibleSpace: Stack(
                 children: [
@@ -1369,19 +1407,20 @@ class ProfilPage extends StatelessWidget {
                         image: DecorationImage(
                           image: NetworkImage('https://wallpapers.com/images/featured/dark-background-b59iy2towqy5yrgb.jpg'),
                           fit: BoxFit.cover,
-                          
                         ),
                       ),
                     ),
                   ),
-
                   innerBoxIsScrolled ? const SizedBox() : Align(
                     alignment: Alignment.bottomCenter,
                     child: Transform.translate(
                       offset: const Offset(0, 30),
-                      child: const CircleAvatar(
-                        backgroundColor: primaryColor,
-                        radius: 60,
+                      child: Opacity(
+                        opacity: _avatarOpacity,
+                        child: const CircleAvatar(
+                          backgroundColor: primaryColor,
+                          radius: 60,
+                        ),
                       ),
                     ),
                   ),
@@ -1398,67 +1437,52 @@ class ProfilPage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 35),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Clément GAILLARD', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: greyColor)),
-                    
-                    const SizedBox(height: 5.0,),
-
+                    const SizedBox(height: 5.0),
                     Text('Ceci es une biographie car j\'adore ecrire', style: Theme.of(context).textTheme.bodyLarge),
-
-                    const SizedBox(height: 15.0,),
-
+                    const SizedBox(height: 15.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('clementt.exe', style: Theme.of(context).textTheme.bodyMedium,),
-                    
+                        Text('clementt.exe', style: Theme.of(context).textTheme.bodyMedium),
                         Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(width: 1, color: greyColor),
-                                borderRadius: BorderRadius.circular(15.0)
+                                borderRadius: BorderRadius.circular(15.0),
                               ),
                               child: const Row(
                                 children: [
-                                  Icon(LucideIcons.instagram, size: 20,),
-                            
-                                  SizedBox(width: 5.0,),
-                            
-                                  Text('Instagram')
+                                  Icon(LucideIcons.instagram, size: 20),
+                                  SizedBox(width: 5.0),
+                                  Text('Instagram'),
                                 ],
                               ),
                             ),
-                            
-                            const SizedBox(width: 5.0,),
-                    
+                            const SizedBox(width: 5.0),
                             Container(
                               padding: const EdgeInsets.all(5.0),
                               decoration: BoxDecoration(
                                 border: Border.all(width: 1, color: greyColor),
-                                borderRadius: BorderRadius.circular(15.0)
+                                borderRadius: BorderRadius.circular(15.0),
                               ),
-                              child: const Icon(LucideIcons.twitter, size: 20,),
+                              child: const Icon(LucideIcons.twitter, size: 20),
                             ),
                           ],
                         ),
                       ],
                     ),
-
-                    const SizedBox(height: 10.0,),
-
+                    const SizedBox(height: 10.0),
                     ElevatedButton(onPressed: () {}, child: const Text('Add Friends')),
-
-                    const SizedBox(height: 30.0,),
-
+                    const SizedBox(height: 30.0),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15.0),
                       child: Stack(
@@ -1467,16 +1491,14 @@ class ProfilPage extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: primaryColor.withOpacity(0.4),
                               image: const DecorationImage(
-                                image: NetworkImage('https://images.frandroid.com/wp-content/uploads/2023/06/apple-plans.jpeg',),
+                                image: NetworkImage('https://images.frandroid.com/wp-content/uploads/2023/06/apple-plans.jpeg'),
                                 fit: BoxFit.cover,
                                 colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
-                              )
+                              ),
                             ),
-                          
                             width: double.infinity,
                             height: MediaQuery.of(context).size.height / 5,
                           ),
-                      
                           Positioned(
                             bottom: 0,
                             right: 0,
@@ -1486,22 +1508,151 @@ class ProfilPage extends StatelessWidget {
                                 color: secondaryColor,
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
-                              child: const Icon(LucideIcons.expand, color: backgroundColor, size: 45,),
+                              child: const Icon(LucideIcons.expand, color: backgroundColor, size: 45),
                             ),
                           ),
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 20,),
-
-                    Post(postNumber: 10,)
+                    const SizedBox(height: 20),
+                    Post(postNumber: 10),
                   ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class StoryPage extends StatefulWidget {
+  const StoryPage({super.key});
+
+  @override
+  _StoryPageState createState() => _StoryPageState();
+}
+
+class _StoryPageState extends State<StoryPage> {
+  bool _isPressed = false;
+  bool _isLiked = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+      _isLiked = !_isLiked;
+    });
+    // Ajoutez ici toute action à effectuer lors du relâchement
+    print('object');
+    HapticFeedback.lightImpact();
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: Size(
+          MediaQuery.of(context).size.width,
+          100.0
+        ),
+        child: Container(
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top
+          ),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              stops: [
+                0.01,
+                1
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                primaryFgColor,
+                Colors.transparent
+              ]
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 10.0
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const CircleAvatar(radius: 20.0, backgroundColor: primaryColor,),
+                    const SizedBox(width: 10.0,),
+            
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('clementt.exe', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: backgroundColor)),
+                        Text('3H', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: greyColor),)
+                      ],
+                    )
+                  ],
+                ),
+            
+                const SizedBox(height: 10.0,),
+            
+                Row(
+                  children: [
+                    Expanded(child: Container(height: 5, decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(15.0)),)),
+                    const SizedBox(width: 5,),
+                    Expanded(child: Container(height: 5, decoration: BoxDecoration(color: backgroundColor.withOpacity(0.4), borderRadius: BorderRadius.circular(15.0)),)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+
+      body: Stack(
+        children: [
+          Image.network('https://i.pinimg.com/736x/71/2a/1d/712a1d140c6737b3b2bcd22401a40400.jpg', height: MediaQuery.of(context).size.height, fit: BoxFit.cover,),
+
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: GestureDetector(
+                onTapDown: _onTapDown,
+                onTapUp: _onTapUp,
+                onTapCancel: _onTapCancel,
+                child: AnimatedScale(
+                  scale: _isPressed ? 0.8 : 1.0,
+                  duration: const Duration(milliseconds: 100),
+                  child: Icon(
+                    LucideIcons.heart, // Change l'icône en fonction de l'état de `isLiked`
+                    color: _isLiked ? primaryColor : Colors.white, // Change la couleur en fonction de l'état de `isLiked`
+                    size: 35,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
